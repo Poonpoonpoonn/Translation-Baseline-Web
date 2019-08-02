@@ -1,0 +1,21 @@
+- hosts: all
+  remote_user: ec2-user
+  tasks:
+
+    - name: Copy docker-compose to docker host
+      copy:
+        src: ../../docker-compose.yml
+        dest: /home/ec2-user/docker-compose-config-monster-web.yml
+        force: yes
+
+    - name: Run docker compose pull
+      shell: docker-compose -f /home/ec2-user/docker-compose-config-monster-web.yml pull
+
+    - name: Run docker compose up
+      shell: docker-compose -f /home/ec2-user/docker-compose-config-monster-web.yml up -d
+
+    - name: Clean up
+      file:
+        path: /home/ec2-user/docker-compose-config-monster-web.yml
+        state: absent
+        force: yes

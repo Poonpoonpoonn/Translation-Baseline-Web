@@ -1,0 +1,34 @@
+pipeline {
+
+    agent {
+        label 'slave-with-docker'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Print Environment') {
+            steps {
+                sh('ls -al')
+                sh('printenv')
+            }
+        }
+
+        stage('Verify new docker image(s)') {
+            steps {
+                sh('docker images')
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'ansible-playbook -i 172.16.14.246, $WORKSPACE/deployment/ansible/web.yml -u ec2-user'
+            }
+        }
+    }
+}
